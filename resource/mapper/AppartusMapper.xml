@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper
+	namespace="com.kristina.telephony.server.mapper.ApparatusMapper">
+	<resultMap id="AppartusResultMap"
+		type="com.kristina.telephony.shared.Apparatus">
+		<id property="id" column="id" />
+		<result property="extensionNumber" column="extension_number" />
+		<result property="operatorName" column="operator_name" />
+		<result property="roomId" column="room_id" />
+	</resultMap>
+
+	<select id=findByRoomId resultMap="AppartusResultMap"
+		parameterType="java.lang.Long">
+		SELECT id, extension_number, room_id, operator_name
+		FROM
+		apparatus
+		WHERE room_id = #{roomId};
+	</select>
+
+	<select id=findByExtensionNumber resultMap="AppartusResultMap"
+		parameterType="java.lang.Long">
+		SELECT id, extension_number, room_id, operator_name
+		FROM apparatus
+		WHERE extension_number = #{extensionNumber};
+	</select>
+
+</mapper>
