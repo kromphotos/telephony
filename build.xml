@@ -1,0 +1,118 @@
+<?xml version = "1.0"?>
+<project name="telephony" default="build" basedir=".">
+
+	<target name="path">
+		<property name="srcDir" value="${basedir}/src" />
+		<property name="resourceDir" value="${basedir}/resource" />
+		<property name="libDir" value="${basedir}/lib" />
+
+		<property name="buildDir" value="${basedir}/build" />
+		<property name="classesDir" value="${buildDir}/classes" />
+		<property name="warDir" value="${buildDir}/war" />
+	</target>
+
+	<target name="clean" depends="path">
+		<echo>Cleaning build</echo>
+		<delete dir="${buildDir}" />
+	</target>
+
+	<target name="make.dir" depends="path">
+		<echo>Make a directory</echo>
+		<mkdir dir="${buildDir}" />
+		<mkdir dir="${classesDir}" />
+		<mkdir dir="${warDir}" />
+	</target>
+
+	<target name="copy" depends="make.dir">
+		<echo>Copy files</echo>
+
+		<copy todir="${warDir}/WEB-INF/lib">
+			<fileset dir="${libDir}" />
+		</copy>
+
+		<copy todir="${classesDir}">
+			<fileset dir="${resourceDir}">
+				<include name="**/*.xml" />
+				<include name="**/*.properties" />
+				<exclude name="WEB-INF/**" />
+			</fileset>
+		</copy>
+
+		<copy todir="${warDir}/WEB-INF">
+			<fileset dir="${resourceDir}/WEB-INF" />
+		</copy>
+
+		<copy todir="${warDir}">
+			<fileset dir="${resourceDir}">
+				<include name="**/*.html" />
+				<include name="**/*.css" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="compile" depends="copy">
+		<echo>Compile files</echo>
+		<javac srcdir="${srcDir}" destdir="${classesDir}" includeantruntime="false" encoding="UTF-8">
+			<classpath>
+				<fileset dir="${libDir}">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="prepare.war" depends="compile">
+		<echo>Prepare WAR</echo>
+		<copy todir="${warDir}/WEB-INF/classes">
+			<fileset dir="${classesDir}" />
+		</copy>
+	</target>
+
+	<target name="gwt.compile" depends="prepare.war">
+		<echo>Compile GWT</echo>
+		<java failonerror="true" fork="true" classname="com.google.gwt.dev.Compiler">
+			<classpath>
+				<fileset dir="${libDir}">
+					<include name="*.jar" />
+				</fileset>
+				<pathelement location="${srcDir}" />
+				<pathelement location="${classesDir}" />
+			</classpath>
+			<arg value="-war" />
+			<arg value="${warDir}" />
+			<arg value="com.kristina.telephony.Telephony" />
+		</java>
+	</target>
+
+	<target name="build" depends="gwt.compile">
+		<echo>Build complete</echo>
+	</target>
+
+	<target name="war" depends="build">
+		<echo>Create WAR archive</echo>
+
+		<zip destfile="${basedir}/Telephony.war" basedir="${warDir}" />
+	</target>
+
+	<target name="devmode" depends="gwt.compile">
+		<echo>Starting GWT Dev Mode</echo>
+
+		<java failonerror="true" fork="true" classname="com.google.gwt.dev.DevMode">
+			<classpath>
+				<fileset dir="${libDir}">
+					<include name="*.jar" />
+				</fileset>
+
+				<pathelement location="${srcDir}" />
+				<pathelement location="${classesDir}" />
+			</classpath>
+			<arg value="-logLevel" />
+            <arg value="TRACE" />
+			<arg value="-war" />
+			<arg value="${warDir}" />
+			<arg value="-startupUrl" />
+			<arg value="Telephony.html" />
+			<arg value="com.kristina.telephony.Telephony" />
+		</java>
+	</target>
+</project>

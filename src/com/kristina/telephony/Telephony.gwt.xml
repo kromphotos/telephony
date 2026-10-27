@@ -20,7 +20,7 @@
   <!-- Other module inherits                                      -->
 
   <!-- Specify the app entry point class.                         -->
-  <entry-point class='com.kristina.telephony.client.Telephony'/>
+  <entry-point class='com.kristina.telephony.client.TelephonyEntryPoint'/>
 
   <!-- Specify the paths for translatable code                    -->
   <source path='client'/>

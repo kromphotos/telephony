@@ -6,7 +6,7 @@
 
 <mapper
 	namespace="com.kristina.telephony.server.mapper.ApparatusMapper">
-	<resultMap id="AppartusResultMap"
+	<resultMap id="ApparatusResultMap"
 		type="com.kristina.telephony.shared.Apparatus">
 		<id property="id" column="id" />
 		<result property="extensionNumber" column="extension_number" />
@@ -14,19 +14,19 @@
 		<result property="roomId" column="room_id" />
 	</resultMap>
 
-	<select id=findByRoomId resultMap="AppartusResultMap"
+	<select id="findByRoomId" resultMap="ApparatusResultMap"
 		parameterType="java.lang.Long">
 		SELECT id, extension_number, room_id, operator_name
 		FROM
 		apparatus
-		WHERE room_id = #{roomId};
+		WHERE room_id = #{roomId}
 	</select>
 
-	<select id=findByExtensionNumber resultMap="AppartusResultMap"
+	<select id="findByExtensionNumber" resultMap="ApparatusResultMap"
 		parameterType="java.lang.Long">
 		SELECT id, extension_number, room_id, operator_name
 		FROM apparatus
-		WHERE extension_number = #{extensionNumber};
+		WHERE extension_number = #{extensionNumber}
 	</select>
 
 </mapper>
