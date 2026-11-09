@@ -7,12 +7,14 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.kristina.telephony.client.AppGwtService;
 import com.kristina.telephony.client.activecalls.ActiveCallsInterface.ActiveCallsViewHandler;
+import com.kristina.telephony.client.events.AnswerCallEvent;
+import com.kristina.telephony.client.events.AnswerCallEventHandler;
 import com.kristina.telephony.client.events.AppEventBus;
 import com.kristina.telephony.client.events.CallEndedEvent;
 import com.kristina.telephony.shared.ActiveCall;
 import com.kristina.telephony.shared.TelephonyException;
 
-public class ActiveCallsPresenter {
+public class ActiveCallsPresenter implements AnswerCallEventHandler {
     private static final String ERROR_UNKNOWN = "An unknown error occurred";
     private static final String ERROR_NO_SELECTION = "Please select a call first";
     private ActiveCallsInterface view;
@@ -56,6 +58,8 @@ public class ActiveCallsPresenter {
                 });
             }
         });
+        
+        AppEventBus.get().addHandler(AnswerCallEvent.TYPE, this);
         loadActiveCalls();
     }
 
@@ -101,5 +105,9 @@ public class ActiveCallsPresenter {
         }
         view.showActiveCalls(viewData, selectedExtension);
     }
-
+    
+    @Override
+    public void onCallAnswered(AnswerCallEvent event) {
+        loadActiveCalls();//обновление очереди при завершении звонка
+    }
 }

@@ -12,18 +12,18 @@
 		<result property="name" column="name" />
 	</resultMap>
 
-	<select id=findAll resultMap="RoomResultMap">
+	<select id="findAll" resultMap="RoomResultMap">
 		SELECT id, name
 		FROM room
 		ORDER BY
-		name;
+		name
 	</select>
 
-	<select id=findById resultMap="RoomResultMap"
+	<select id="findById" resultMap="RoomResultMap"
 		parameterType="java.lang.Long">
 		SELECT id, name
 		FROM room
-		WHERE id=#{id};
+		WHERE id=#{id}
 	</select>
 
 </mapper>

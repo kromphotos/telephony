@@ -4,38 +4,40 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.kristina.telephony.client.activecalls.ActiveCallsPresenter;
 import com.kristina.telephony.client.activecalls.ActiveCallsView;
-import com.kristina.telephony.client.queue.QueuePresenter;
-import com.kristina.telephony.client.queue.QueueView;
+import com.kristina.telephony.client.tree.TreePresenter;
+import com.kristina.telephony.client.tree.TreeView;
 
 public class TelephonyEntryPoint implements EntryPoint {
+    private static final String ACTIVE_CALLS_HEADER = "Текущие звонки:";
+    private static final String CALLS_QUEUE_HEADER = "Очередь звонков:";
+
     public void onModuleLoad() {
+        TreeView treeView = new TreeView();
+        TreePresenter treePresenter = new TreePresenter(treeView);
+        
         //-----Active calls-----
         ActiveCallsView acvtiveCallsView = new ActiveCallsView();
         new ActiveCallsPresenter(acvtiveCallsView);
         
-        //-----Queue-----
-        QueueView queueView = new QueueView();
-        new QueuePresenter(queueView);
-        
+
         //-----Главный контейнер-----
         FlowPanel mainPanel = new FlowPanel();
         
-        VerticalPanel leftColumn = new VerticalPanel();
-        leftColumn.setWidth("300px");
-        leftColumn.add(new Label("Очередь звонков:"));
-        leftColumn.add(queueView);
+        FlowPanel leftColumn = new FlowPanel();
+        leftColumn.setWidth("400px");
+        leftColumn.add(new Label(CALLS_QUEUE_HEADER));
+        treePresenter.go(leftColumn);
         
-        VerticalPanel rightColumn = new VerticalPanel();
+        FlowPanel rightColumn = new FlowPanel();
         rightColumn.setWidth("400px");
-        rightColumn.add(new Label("Текущие звонки:"));
+        rightColumn.add(new Label(ACTIVE_CALLS_HEADER));
         rightColumn.add(acvtiveCallsView);
         
         mainPanel.add(leftColumn);
         mainPanel.add(rightColumn);
         
-        RootPanel.get("main-container").add(mainPanel);
+        RootPanel.get().add(mainPanel);
     }
 }

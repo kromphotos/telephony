@@ -11,12 +11,11 @@
 		<id property="id" column="id" />
 		<result property="extensionNumber" column="extension_number" />
 		<result property="operatorName" column="operator_name" />
-		<result property="roomId" column="room_id" />
 	</resultMap>
 
 	<select id="findByRoomId" resultMap="ApparatusResultMap"
 		parameterType="java.lang.Long">
-		SELECT id, extension_number, room_id, operator_name
+		SELECT id, extension_number, operator_name
 		FROM
 		apparatus
 		WHERE room_id = #{roomId}
@@ -24,7 +23,7 @@
 
 	<select id="findByExtensionNumber" resultMap="ApparatusResultMap"
 		parameterType="java.lang.Long">
-		SELECT id, extension_number, room_id, operator_name
+		SELECT id, extension_number, operator_name
 		FROM apparatus
 		WHERE extension_number = #{extensionNumber}
 	</select>

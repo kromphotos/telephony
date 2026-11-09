@@ -13,6 +13,10 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class QueueView extends Composite implements QueueInterface {
+    private static final String EMPTY_STRING = "";
+
+    private static final String QUEUE_IS_EMPTY_ERROR = "Queue is empty!";
+
     private QueueViewHandler handler;
 
     private VerticalPanel queuePanel;
@@ -37,10 +41,10 @@ public class QueueView extends Composite implements QueueInterface {
     @Override
     public void showQueue(List<QueueViewData> queue, String selectedPhone) {
         queuePanel.clear();
-        errorLabel.setText("");
+        errorLabel.setText(EMPTY_STRING);
 
         if (queue == null || queue.isEmpty()) {
-            queuePanel.add(new Label("Queue is empty!"));
+            queuePanel.add(new Label(QUEUE_IS_EMPTY_ERROR));
             return;
         }
 

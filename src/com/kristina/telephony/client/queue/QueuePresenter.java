@@ -6,13 +6,15 @@ import java.util.List;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.kristina.telephony.client.AppGwtService;
+import com.kristina.telephony.client.events.AnswerCallEvent;
+import com.kristina.telephony.client.events.AnswerCallEventHandler;
 import com.kristina.telephony.client.events.AppEventBus;
 import com.kristina.telephony.client.events.CallEndedEvent;
 import com.kristina.telephony.client.events.CallEndedEventHandler;
 import com.kristina.telephony.client.queue.QueueInterface.QueueViewHandler;
 import com.kristina.telephony.shared.TelephonyException;
 
-public class QueuePresenter implements CallEndedEventHandler {
+public class QueuePresenter implements CallEndedEventHandler, AnswerCallEventHandler {
     private static final String ERROR_UNKNOWN = "An unknown error occurred";
 
     public interface PhoneSelectionHandler {
@@ -42,6 +44,7 @@ public class QueuePresenter implements CallEndedEventHandler {
         });
 
         AppEventBus.get().addHandler(CallEndedEvent.TYPE, this);//подписка на событие 
+        AppEventBus.get().addHandler(AnswerCallEvent.TYPE, this);
 
         loadQueue();
     }
@@ -79,6 +82,11 @@ public class QueuePresenter implements CallEndedEventHandler {
     
     @Override
     public void onCallEnded(CallEndedEvent event) {
+        loadQueue();//обновление очереди при завершении звонка
+    }
+    
+    @Override
+    public void onCallAnswered(AnswerCallEvent event) {
         loadQueue();//обновление очереди при завершении звонка
     }
 }

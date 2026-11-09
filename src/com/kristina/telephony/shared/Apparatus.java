@@ -7,8 +7,8 @@ public class Apparatus implements IsSerializable {
     private Long extensionNumber;
     private String operatorName;
     private boolean busy;
-    private String phoneNumber;//входящий номер??? может не надо
-    
+    private String phoneNumber;
+
     public Apparatus() {
         
     }
@@ -66,6 +66,4 @@ public class Apparatus implements IsSerializable {
         return "Apparatus [id=" + id + ", extensionNumber=" + extensionNumber + ", operatorName=" + operatorName + ", busy=" + busy + ", phoneNumber="
                 + phoneNumber + "]";
     }
-    
-    
 }

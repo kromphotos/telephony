@@ -38,5 +38,4 @@ public class SelectionManager {
         selectedPhone = null;
         selectedExtensionNumber = null;
     }
-    
 }

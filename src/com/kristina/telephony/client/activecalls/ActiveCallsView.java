@@ -14,6 +14,9 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class ActiveCallsView extends Composite implements ActiveCallsInterface {
+    private static final String EMPTY_STRING = " ";
+    private static final String NO_ACTIVE_CALLS_ERROR = "No active calls!!!";
+    private static final String END_CALL_BUTTON = "Окончить";
     private ActiveCallsViewHandler handler;
     private VerticalPanel callsPanel;
     private Label errorLabel;
@@ -29,7 +32,7 @@ public class ActiveCallsView extends Composite implements ActiveCallsInterface {
         errorLabel = new Label();
         errorLabel.getElement().getStyle().setColor("red");
 
-        endButton = new Button("Окончить");
+        endButton = new Button(END_CALL_BUTTON);
         endButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -52,12 +55,12 @@ public class ActiveCallsView extends Composite implements ActiveCallsInterface {
         errorLabel.setText("");
 
         if (calls == null || calls.isEmpty()) {
-            callsPanel.add(new Label("No active calls!!!"));
+            callsPanel.add(new Label(NO_ACTIVE_CALLS_ERROR));
             return;
         }
 
         for (final ActiveCallsViewData data : calls) {
-            String text = data.getExtensionNumber() + " " + data.getOperatorName() + " " + data.getPhoneNumber();
+            String text = data.getExtensionNumber() + EMPTY_STRING + data.getOperatorName() + EMPTY_STRING + data.getPhoneNumber();
             final Label callLabel = new Label(text);
 
             callLabel.getElement().getStyle().setCursor(Cursor.POINTER);
