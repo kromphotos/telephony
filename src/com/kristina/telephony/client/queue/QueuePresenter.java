@@ -17,15 +17,15 @@ import com.kristina.telephony.shared.TelephonyException;
 public class QueuePresenter implements CallEndedEventHandler, AnswerCallEventHandler {
     private static final String ERROR_UNKNOWN = "An unknown error occurred";
 
-    public interface PhoneSelectionHandler {
-        void onPhoneSelected(String phoneNumber);
-    }
-
     private QueueInterface view;
     private PhoneSelectionHandler selectionHandler;
 
     private List<String> currentQueue = new ArrayList<>();
     private String selectedPhone;
+    
+    public interface PhoneSelectionHandler {
+        void onPhoneSelected(String phoneNumber);
+    }
 
     public QueuePresenter(final QueueInterface view, PhoneSelectionHandler selectionHandler) {
         this.view = view;
@@ -82,11 +82,11 @@ public class QueuePresenter implements CallEndedEventHandler, AnswerCallEventHan
     
     @Override
     public void onCallEnded(CallEndedEvent event) {
-        loadQueue();//обновление очереди при завершении звонка
+        loadQueue();
     }
     
     @Override
     public void onCallAnswered(AnswerCallEvent event) {
-        loadQueue();//обновление очереди при завершении звонка
+        loadQueue();
     }
 }

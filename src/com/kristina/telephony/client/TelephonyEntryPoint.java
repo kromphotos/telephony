@@ -17,12 +17,9 @@ public class TelephonyEntryPoint implements EntryPoint {
         TreeView treeView = new TreeView();
         TreePresenter treePresenter = new TreePresenter(treeView);
         
-        //-----Active calls-----
         ActiveCallsView acvtiveCallsView = new ActiveCallsView();
         new ActiveCallsPresenter(acvtiveCallsView);
         
-
-        //-----Главный контейнер-----
         FlowPanel mainPanel = new FlowPanel();
         
         FlowPanel leftColumn = new FlowPanel();

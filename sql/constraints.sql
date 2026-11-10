@@ -1,0 +1,4 @@
+ALTER TABLE room ADD CONSTRAINT room_pk PRIMARY KEY(id);
+
+ALTER TABLE apparatus ADD CONSTRAINT apparatus_pk PRIMARY KEY(id);
+ALTER TABLE apparatus ADD CONSTRAINT apparatus_roomId_fk FOREIGN KEY(room_id) REFERENCES room(id) ON DELETE CASCADE;

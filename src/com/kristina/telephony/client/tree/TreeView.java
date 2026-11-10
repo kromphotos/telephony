@@ -57,7 +57,7 @@ public class TreeView extends Composite implements TreeInterface {
     @Override
     public void showTree(Map<String, List<TreeViewData>> rooms, Long selectedExtensionNumber) {
         treePanel.clear();
-        errorLabel.setText("");
+        errorLabel.setText(EMPTY_STRING);
 
         if (rooms == null || rooms.isEmpty()) {
             treePanel.add(new Label(ROOM_IS_EMPTY_ERROR));

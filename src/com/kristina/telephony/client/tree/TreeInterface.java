@@ -12,7 +12,6 @@ public interface TreeInterface {
 
     void setHandler(TreeViewHandler handler);
 
-    //что вью может сообщить презентеру?
     interface TreeViewHandler {
         void onApparatusSelected(Long extensionNumber);
 

@@ -17,7 +17,9 @@ public class ActiveCallsView extends Composite implements ActiveCallsInterface {
     private static final String EMPTY_STRING = " ";
     private static final String NO_ACTIVE_CALLS_ERROR = "No active calls!!!";
     private static final String END_CALL_BUTTON = "Окончить";
+    
     private ActiveCallsViewHandler handler;
+    
     private VerticalPanel callsPanel;
     private Label errorLabel;
     private Button endButton;
@@ -52,7 +54,7 @@ public class ActiveCallsView extends Composite implements ActiveCallsInterface {
     @Override
     public void showActiveCalls(List<ActiveCallsViewData> calls, Long selectedExtensionNumber) {
         callsPanel.clear();
-        errorLabel.setText("");
+        errorLabel.setText(EMPTY_STRING);
 
         if (calls == null || calls.isEmpty()) {
             callsPanel.add(new Label(NO_ACTIVE_CALLS_ERROR));

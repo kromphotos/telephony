@@ -40,8 +40,6 @@ public class TreePresenter implements CallEndedEventHandler, QueuePresenter.Phon
         queueView = new QueueView();
         queuePresenter = new QueuePresenter(queueView, this);
 
-        AppEventBus.get().addHandler(CallEndedEvent.TYPE, this);//подписка на событие завершения звонка
-
         view.setHandler(new TreeInterface.TreeViewHandler() {
             @Override
             public void onApparatusSelected(Long extensionNumber) {
@@ -55,6 +53,8 @@ public class TreePresenter implements CallEndedEventHandler, QueuePresenter.Phon
                 answerCall();
             }
         });
+
+        AppEventBus.get().addHandler(CallEndedEvent.TYPE, this);//подписка на событие завершения звонка
 
         loadRooms();//загрузка комнат при старте
     }
