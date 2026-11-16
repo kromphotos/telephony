@@ -1,0 +1,74 @@
+openapi: 3.0.0
+info:
+  title: ATS API
+  version: 1.0.0
+  description: API для взаимодействия JS-клиента с сервером АТС
+servers:
+  - url: http://localhost:8081
+
+paths:
+  /calls:
+    post:
+      summary: Начать входящий звонок
+      description: Передает команду в Телефонию на добавление звонка в очередь
+      requestBody: 
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: 
+                phoneNumber:
+                  type: string
+                  example: "8-909-589-45-82"
+      responses:
+        '200':
+          description: Звонок успешно начат
+        '400':
+          description: Звонок уже в очереди
+
+  /calls/{phoneNumber}:
+    delete:
+      summary: Отменить входящий звонок
+      description: Передает команду в Телефонию на удаление звонка из очереди
+      parameters:
+        - name: phoneNumber
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "8-909-589-45-82"
+      responses:
+        '200':
+          description: Звонок успешно отменен
+        '400':
+          description: Звонок не найден в очереди
+
+  /history:
+    get:
+      summary: Получить историю событий
+      description: Возвращает все события, полученные из RabbitMQ, отсортированные по времени
+      responses:
+        '200':
+          description: История успешно получена
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      enum: [INCOMING, CANCELLED, ANSWERED, ENDED]
+                    phoneNumber:
+                      type: string
+                    extensionNumber:
+                      type: integer
+                    operatorName:
+                      type: string
+                    time:
+                      type: string
+                      format: date-time
+
+

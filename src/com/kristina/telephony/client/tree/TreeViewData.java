@@ -2,8 +2,8 @@ package com.kristina.telephony.client.tree;
 
 public class TreeViewData {
     private String phoneNumber;
-    private Long extensionNumber;
     private String operatorName;
+    private Long extensionNumber;
     private boolean busy;
     
     public TreeViewData(Long extensionNumber, String operatorName, boolean busy, String phoneNumber) {
@@ -36,9 +36,9 @@ public class TreeViewData {
     public boolean isBusy() {
         return busy;
     }
-    
+
     @Override
     public String toString() {
-        return "TreeViewData [extensionNumber=" + extensionNumber + ", operatorName=" + operatorName + "]";
+        return "TreeViewData [phoneNumber=" + phoneNumber + ", operatorName=" + operatorName + ", extensionNumber=" + extensionNumber + ", busy=" + busy + "]";
     }
 }

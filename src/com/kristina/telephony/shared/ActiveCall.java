@@ -1,9 +1,11 @@
 package com.kristina.telephony.shared;
 
-public class ActiveCall {
-    Long extensionNumber;
-    String phoneNumber;
-    String operatorName;
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+public class ActiveCall implements IsSerializable {
+    private Long extensionNumber;
+    private String phoneNumber;
+    private String operatorName;
     
     public ActiveCall() {
         

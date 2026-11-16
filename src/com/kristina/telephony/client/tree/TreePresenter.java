@@ -13,13 +13,15 @@ import com.kristina.telephony.client.events.AnswerCallEvent;
 import com.kristina.telephony.client.events.AppEventBus;
 import com.kristina.telephony.client.events.CallEndedEvent;
 import com.kristina.telephony.client.events.CallEndedEventHandler;
+import com.kristina.telephony.client.events.RefreshEvent;
+import com.kristina.telephony.client.events.RefreshEventHandler;
 import com.kristina.telephony.client.queue.QueuePresenter;
 import com.kristina.telephony.client.queue.QueueView;
 import com.kristina.telephony.shared.Apparatus;
 import com.kristina.telephony.shared.Room;
 import com.kristina.telephony.shared.TelephonyException;
 
-public class TreePresenter implements CallEndedEventHandler, QueuePresenter.PhoneSelectionHandler {
+public class TreePresenter implements CallEndedEventHandler, QueuePresenter.PhoneSelectionHandler, RefreshEventHandler {
     private static final String ERROR_UNKNOWN = "An unknown error occurred";
     private static final String ERROR_NO_SELECTION = "Please select apparatus and phone first";
 
@@ -28,7 +30,8 @@ public class TreePresenter implements CallEndedEventHandler, QueuePresenter.Phon
     private QueueView queueView;
 
     private List<Room> currentRooms = new ArrayList<>();
-    private Map<String, List<TreeViewData>> roomsMap = new LinkedHashMap();
+    private Map<Long, List<TreeViewData>> roomsMap = new LinkedHashMap<>();
+    private Map<Long, String> roomNamesMap = new LinkedHashMap<>();
 
     //то что нажато и то что мы будем проверять при нажатии на кнопку позвонить
     private Long selectedExtensionNumber;
@@ -55,12 +58,13 @@ public class TreePresenter implements CallEndedEventHandler, QueuePresenter.Phon
         });
 
         AppEventBus.get().addHandler(CallEndedEvent.TYPE, this);//подписка на событие завершения звонка
+        AppEventBus.get().addHandler(RefreshEvent.TYPE, this);
 
         loadRooms();//загрузка комнат при старте
     }
 
     public void go(FlowPanel container) {
-        container.add((com.google.gwt.user.client.ui.Widget) view); 
+        container.add((com.google.gwt.user.client.ui.Widget) view);
         container.add(queueView);
     }
 
@@ -85,6 +89,7 @@ public class TreePresenter implements CallEndedEventHandler, QueuePresenter.Phon
 
     private void loadApparatuses() {
         roomsMap.clear();//очистка всех пар
+        roomNamesMap.clear();
 
         if (currentRooms == null || currentRooms.isEmpty()) {
             renderTree();
@@ -95,6 +100,9 @@ public class TreePresenter implements CallEndedEventHandler, QueuePresenter.Phon
         final int[] loadedCount = { 0 };//массив из 1 элемента чтобы работать с анонимными классами и иметь возможность менять переменную
 
         for (final Room room : currentRooms) {
+            roomNamesMap.put(room.getId(), room.getName());
+            roomsMap.put(room.getId(), new ArrayList<TreeViewData>());
+            
             AppGwtService.get().getApparatusInRoom(room.getId(), new AsyncCallback<List<Apparatus>>() {
                 @Override
                 public void onSuccess(List<Apparatus> apparatuses) {
@@ -106,7 +114,7 @@ public class TreePresenter implements CallEndedEventHandler, QueuePresenter.Phon
                                 app.isBusy(),
                                 app.getPhoneNumber()));
                     }
-                    roomsMap.put(room.getName(), treeDataList);
+                    roomsMap.put(room.getId(), treeDataList);
 
                     loadedCount[0]++;
                     if (loadedCount[0] == totalRooms) {
@@ -128,7 +136,7 @@ public class TreePresenter implements CallEndedEventHandler, QueuePresenter.Phon
     }
 
     private void renderTree() {
-        view.showTree(roomsMap, selectedExtensionNumber);
+        view.showTree(roomsMap, roomNamesMap, selectedExtensionNumber);
     }
 
     private void updateAnswerButtonState() {
@@ -152,7 +160,6 @@ public class TreePresenter implements CallEndedEventHandler, QueuePresenter.Phon
                 //перезагружаем очередь и дерево и активные звонки
                 loadRooms();
 
-                //уточнить как нам обновлять другие компоненты при ответе на звонок????
                 AppEventBus.get().fireEvent(new AnswerCallEvent());
             }
 
@@ -166,15 +173,20 @@ public class TreePresenter implements CallEndedEventHandler, QueuePresenter.Phon
             }
         });
     }
-    
+
     @Override
     public void onPhoneSelected(String phoneNumber) {
         selectedPhone = phoneNumber;
         updateAnswerButtonState();
     }
-    
+
     @Override
     public void onCallEnded(CallEndedEvent event) {
+        loadRooms();
+    }
+    
+    @Override
+    public void onRefresh(RefreshEvent event) {
         loadRooms();
     }
 }

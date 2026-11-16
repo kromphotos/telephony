@@ -13,7 +13,7 @@ import com.kristina.telephony.shared.TelephonyException;
  * The server-side implementation of the RPC service.
  */
 @SuppressWarnings("serial")
-public class TelephonyServiceImpl extends RemoteServiceServlet implements GwtService {
+public class TelephonyRPCImplementation extends RemoteServiceServlet implements GwtService {
     private final TelephonyService service = new TelephonyServiceImp();
 
     @Override

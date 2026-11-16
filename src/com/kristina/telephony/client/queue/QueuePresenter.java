@@ -11,10 +11,12 @@ import com.kristina.telephony.client.events.AnswerCallEventHandler;
 import com.kristina.telephony.client.events.AppEventBus;
 import com.kristina.telephony.client.events.CallEndedEvent;
 import com.kristina.telephony.client.events.CallEndedEventHandler;
+import com.kristina.telephony.client.events.RefreshEvent;
+import com.kristina.telephony.client.events.RefreshEventHandler;
 import com.kristina.telephony.client.queue.QueueInterface.QueueViewHandler;
 import com.kristina.telephony.shared.TelephonyException;
 
-public class QueuePresenter implements CallEndedEventHandler, AnswerCallEventHandler {
+public class QueuePresenter implements CallEndedEventHandler, AnswerCallEventHandler, RefreshEventHandler {
     private static final String ERROR_UNKNOWN = "An unknown error occurred";
 
     private QueueInterface view;
@@ -43,8 +45,9 @@ public class QueuePresenter implements CallEndedEventHandler, AnswerCallEventHan
             }
         });
 
-        AppEventBus.get().addHandler(CallEndedEvent.TYPE, this);//подписка на событие 
+        AppEventBus.get().addHandler(CallEndedEvent.TYPE, this);
         AppEventBus.get().addHandler(AnswerCallEvent.TYPE, this);
+        AppEventBus.get().addHandler(RefreshEvent.TYPE, this);
 
         loadQueue();
     }
@@ -87,6 +90,11 @@ public class QueuePresenter implements CallEndedEventHandler, AnswerCallEventHan
     
     @Override
     public void onCallAnswered(AnswerCallEvent event) {
+        loadQueue();
+    }
+    
+    @Override
+    public void onRefresh(RefreshEvent event) {
         loadQueue();
     }
 }

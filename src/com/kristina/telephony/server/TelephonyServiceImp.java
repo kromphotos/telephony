@@ -2,13 +2,13 @@ package com.kristina.telephony.server;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
-import com.google.gwt.core.client.GWT;
 import com.kristina.telephony.server.dao.ApparatusDao;
 import com.kristina.telephony.server.dao.ApparatusDaoImp;
 import com.kristina.telephony.server.dao.RoomDao;
@@ -27,11 +27,13 @@ public class TelephonyServiceImp implements TelephonyService {
 
     private final CallService callService = CallService.getInstance();//хранилище данных в памяти
 
+    private static final Logger LOGGER = Logger.getLogger(TelephonyServiceImp.class.getName());
+    
     static {
         try (InputStream inputStream = Resources.getResourceAsStream(RESOURCE)) {
             sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
         } catch (Exception e) {
-            GWT.log("Error connecton to database");
+            LOGGER.severe("Error connection to database: " + e.getMessage());
         }
     }
 
@@ -78,8 +80,23 @@ public class TelephonyServiceImp implements TelephonyService {
         if (extensionNumber == null) {
             throw new TelephonyException("Extension number is empty!");
         }
+        
+        Apparatus apparatus;
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            apparatus = getApparatusDao(session).findByExtensionNumber(extensionNumber);
+        } catch (Exception e) {
+            throw new TelephonyException("Error searching apparatus");
+        }
+        
+        if (apparatus == null) {
+            throw new TelephonyException("Apparatus not found"); 
+        }
 
-        callService.endCall(extensionNumber);
+        try {
+            callService.endCall(extensionNumber);
+        } catch (TelephonyException e) {
+            throw new TelephonyException("Apparatus is free");
+        }
     }
 
     //операция 6 - просмотр активных звонков

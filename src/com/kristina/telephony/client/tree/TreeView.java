@@ -16,9 +16,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class TreeView extends Composite implements TreeInterface {
     private static final String EMPTY_STRING = " ";
-    private static final String ISBUSY_TEXT = "(занят: ";
+    private static final String ISBUSY_TEXT = "(busy: ";
     private static final String ROOM_IS_EMPTY_ERROR = "Room is empty!";
-    private static final String ANSWER_BUTTON = "Ответить";
+    private static final String ANSWER_BUTTON = "Answer";
 
     private TreeViewHandler handler;
 
@@ -55,7 +55,7 @@ public class TreeView extends Composite implements TreeInterface {
     }
 
     @Override
-    public void showTree(Map<String, List<TreeViewData>> rooms, Long selectedExtensionNumber) {
+    public void showTree(Map<Long, List<TreeViewData>> rooms, Map<Long, String> roomNames, Long selectedExtensionNumber) {
         treePanel.clear();
         errorLabel.setText(EMPTY_STRING);
 
@@ -64,9 +64,11 @@ public class TreeView extends Composite implements TreeInterface {
             return;
         }
 
-        for (Map.Entry<String, List<TreeViewData>> entry : rooms.entrySet()) {
-            String roomName = entry.getKey();
+        for (Map.Entry<Long, List<TreeViewData>> entry : rooms.entrySet()) {
+            Long roomId = entry.getKey();
             List<TreeViewData> apparatuses = entry.getValue();
+
+            String roomName = roomNames.get(roomId);
 
             Label roomLabel = new Label(roomName + ":");
             roomLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
@@ -78,23 +80,23 @@ public class TreeView extends Composite implements TreeInterface {
             if (apparatuses != null && !apparatuses.isEmpty()) {
                 for (final TreeViewData app : apparatuses) {
                     String text = app.getExtensionNumber() + EMPTY_STRING + app.getOperatorName();
-                    
+
                     if (app.isBusy() && app.getPhoneNumber() != null) {
                         text += ISBUSY_TEXT + app.getPhoneNumber() + ")";
                     }
-                    
+
                     final Label appLabel = new Label(text);
-                    
+
                     appLabel.getElement().getStyle().setPaddingLeft(15, Unit.PX);
                     appLabel.getElement().getStyle().setPadding(4, Unit.PX);
                     appLabel.getElement().getStyle().setCursor(Cursor.POINTER);
                     appLabel.getElement().getStyle().setProperty("borderBottom", "1px solid #eeeeee");
-                    
+
                     if (app.getExtensionNumber().equals(selectedExtensionNumber)) {
                         appLabel.getElement().getStyle().setBackgroundColor("#b3d4fc");
                         appLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
                     }
-                    
+
                     appLabel.addClickHandler(new ClickHandler() {
                         @Override
                         public void onClick(ClickEvent event) {
@@ -103,9 +105,14 @@ public class TreeView extends Composite implements TreeInterface {
                             }
                         }
                     });
-                    
+
                     treePanel.add(appLabel);
                 }
+            } else {
+                Label emptyLabel = new Label("No operators available!");
+                emptyLabel.getElement().getStyle().setPaddingLeft(15, Unit.PX);
+                emptyLabel.getElement().getStyle().setColor("#888888");
+                treePanel.add(emptyLabel);
             }
         }
 

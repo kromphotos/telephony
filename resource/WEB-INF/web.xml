@@ -8,12 +8,23 @@
   <!-- Servlets -->
   <servlet>
     <servlet-name>telephonyServlet</servlet-name>
-    <servlet-class>com.kristina.telephony.server.TelephonyServiceImpl</servlet-class>
+    <servlet-class>com.kristina.telephony.server.TelephonyRPCImplementation</servlet-class>
   </servlet>
   
   <servlet-mapping>
     <servlet-name>telephonyServlet</servlet-name>
     <url-pattern>/app/telephony</url-pattern>
+  </servlet-mapping>
+  
+  <!-- HTTP API для АТС -->
+  <servlet>
+    <servlet-name>CallHttpServlet</servlet-name>
+    <servlet-class>com.kristina.telephony.server.http.CallHttpServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>CallHttpServlet</servlet-name>
+    <url-pattern>/api/calls/*</url-pattern>
   </servlet-mapping>
   
   <!-- Default page to serve -->

@@ -14,7 +14,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class QueueView extends Composite implements QueueInterface {
     private static final String EMPTY_STRING = "";
-
     private static final String QUEUE_IS_EMPTY_ERROR = "Queue is empty!";
 
     private QueueViewHandler handler;

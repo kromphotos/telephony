@@ -16,7 +16,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class ActiveCallsView extends Composite implements ActiveCallsInterface {
     private static final String EMPTY_STRING = " ";
     private static final String NO_ACTIVE_CALLS_ERROR = "No active calls!!!";
-    private static final String END_CALL_BUTTON = "Окончить";
+    private static final String END_CALL_BUTTON = "End";
     
     private ActiveCallsViewHandler handler;
     

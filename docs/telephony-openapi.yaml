@@ -1,0 +1,49 @@
+openapi: 3.0.0
+info:
+  title: Telephony API
+  version: 1.0.0
+  description: API для приема команд от микросервиса АТС
+servers:
+  - url: http://localhost:8080/app
+
+paths:
+  /api/calls:
+    post:
+      summary: Добавить входящий звонок
+      description: Добавляет новый звонок в очередь
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phoneNumber:
+                  type: string
+                  example: "8-909-123-45-67"
+      responses:
+        '200':
+          description: Звонок добавлен
+        '400':
+          description: Звонок уже есть в очереди
+
+  /api/calls/{phoneNumber}:
+    delete:
+      summary: Удалить звонок из очереди        
+      description: Удаляет звонок по номеру телефона  
+      parameters:
+        - name: phoneNumber
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "8-909-123-45-67"
+      responses:
+        '200':
+          description: Звонок удален
+        '400':
+          description: Звонок не найден
+        
+
+
+

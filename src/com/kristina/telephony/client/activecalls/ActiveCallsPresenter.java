@@ -11,12 +11,15 @@ import com.kristina.telephony.client.events.AnswerCallEvent;
 import com.kristina.telephony.client.events.AnswerCallEventHandler;
 import com.kristina.telephony.client.events.AppEventBus;
 import com.kristina.telephony.client.events.CallEndedEvent;
+import com.kristina.telephony.client.events.RefreshEvent;
+import com.kristina.telephony.client.events.RefreshEventHandler;
 import com.kristina.telephony.shared.ActiveCall;
 import com.kristina.telephony.shared.TelephonyException;
 
-public class ActiveCallsPresenter implements AnswerCallEventHandler {
+public class ActiveCallsPresenter implements AnswerCallEventHandler, RefreshEventHandler {
     private static final String ERROR_UNKNOWN = "An unknown error occurred";
     private static final String ERROR_NO_SELECTION = "Please select a call first";
+
     private ActiveCallsInterface view;
 
     private Long selectedExtension;
@@ -58,8 +61,10 @@ public class ActiveCallsPresenter implements AnswerCallEventHandler {
                 });
             }
         });
-        
+
         AppEventBus.get().addHandler(AnswerCallEvent.TYPE, this);
+        AppEventBus.get().addHandler(RefreshEvent.TYPE, this);
+
         loadActiveCalls();
     }
 
@@ -105,9 +110,14 @@ public class ActiveCallsPresenter implements AnswerCallEventHandler {
         }
         view.showActiveCalls(viewData, selectedExtension);
     }
-    
+
     @Override
     public void onCallAnswered(AnswerCallEvent event) {
-        loadActiveCalls();//обновление очереди при завершении звонка
+        loadActiveCalls();
+    }
+
+    @Override
+    public void onRefresh(RefreshEvent event) {
+        loadActiveCalls();
     }
 }

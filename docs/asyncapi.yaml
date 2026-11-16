@@ -1,0 +1,57 @@
+asyncapi: '2.6.0'
+info:
+  title: Telephony Events
+  version: '1.0.0'
+  description: События, которые Телефония отправляет в АТС через RabbitMQ
+
+channels:
+  telephony.events:
+    description: Exchange для событий телефонных звонков
+    publish:
+      operationId: publishCallEvent
+      message:
+        $ref: '#/components/messages/CallEvent'
+
+
+components:
+  messages:
+    CallEvent:
+      name: CallEvent
+      title: Событие звонка
+      description: Одно из четырех событий INCOMING, CANCELLED, ANSWERED, ENDED
+      payload:
+        $ref: '#/components/schemas/CallEventSchema'
+
+  schemas:
+    CallEventSchema:
+      type: object
+      required:
+        - type
+        - phoneNumber
+        - time
+      properties:
+        type:
+          type: string
+          enum: [INCOMING, CANCELLED, ANSWERED, ENDED]
+        phoneNumber:
+          type: string
+          example: "8-909-589-45-82"
+        extensionNumber:
+          type: integer
+          example: 113
+        operatorName:
+          type: string
+          example: "Вася"
+        time:
+          type: string
+          format: date-time
+          example: "2026-10-05T08:30:00Z"
+        
+
+
+
+
+
+
+
+   
