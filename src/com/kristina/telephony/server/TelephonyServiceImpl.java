@@ -20,15 +20,15 @@ import com.kristina.telephony.shared.Apparatus;
 import com.kristina.telephony.shared.Room;
 import com.kristina.telephony.shared.TelephonyException;
 
-public class TelephonyServiceImp implements TelephonyService {
+public class TelephonyServiceImpl implements TelephonyService {
     private static final String RESOURCE = "mybatis-config.xml";
 
     private static SqlSessionFactory sqlSessionFactory;
 
     private final CallService callService = CallService.getInstance();//хранилище данных в памяти
 
-    private static final Logger LOGGER = Logger.getLogger(TelephonyServiceImp.class.getName());
-    
+    private static final Logger LOGGER = Logger.getLogger(TelephonyServiceImpl.class.getName());
+
     static {
         try (InputStream inputStream = Resources.getResourceAsStream(RESOURCE)) {
             sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
@@ -50,7 +50,11 @@ public class TelephonyServiceImp implements TelephonyService {
     //операция 3 - посмотреть очередь 
     @Override
     public List<String> getQueue() throws TelephonyException {
-        return callService.getQueue();
+        try {
+            return callService.getQueue();
+        } catch (Exception e) {
+            throw new TelephonyException("Error searching queue!");
+        }
     }
 
     //операция 4 - ответ на звонок
@@ -68,7 +72,7 @@ public class TelephonyServiceImp implements TelephonyService {
         }
 
         if (apparatus == null) {
-            throw new TelephonyException("It's empty apparatus!");
+            throw new TelephonyException("Apparatus not found!");
         }
 
         callService.answerCall(extensionNumber, phoneNumber, apparatus);
@@ -78,31 +82,35 @@ public class TelephonyServiceImp implements TelephonyService {
     @Override
     public void endCall(Long extensionNumber) throws TelephonyException {
         if (extensionNumber == null) {
-            throw new TelephonyException("Extension number is empty!");
+            throw new TelephonyException("Apparatus not found");
         }
-        
+
         Apparatus apparatus;
         try (SqlSession session = sqlSessionFactory.openSession()) {
             apparatus = getApparatusDao(session).findByExtensionNumber(extensionNumber);
         } catch (Exception e) {
             throw new TelephonyException("Error searching apparatus");
         }
-        
+
         if (apparatus == null) {
-            throw new TelephonyException("Apparatus not found"); 
+            throw new TelephonyException("Apparatus not found");
         }
 
         try {
             callService.endCall(extensionNumber);
         } catch (TelephonyException e) {
-            throw new TelephonyException("Apparatus is free");
+            throw new TelephonyException("Apparatus not found");
         }
     }
 
     //операция 6 - просмотр активных звонков
     @Override
     public List<ActiveCall> getActiveCalls() throws TelephonyException {
-        return callService.getActiveCalls();
+        try {
+            return callService.getActiveCalls();
+        } catch (TelephonyException e) {
+            throw new TelephonyException("Active calls not found!");
+        }
     }
 
     //операция 7 - посмотреть комнаты
@@ -119,9 +127,9 @@ public class TelephonyServiceImp implements TelephonyService {
     @Override
     public List<Apparatus> getApparatusInRoom(Long roomId) throws TelephonyException {
         if (roomId == null) {
-            throw new TelephonyException("Room id is empty!");
+            throw new TelephonyException("Room is not found!");
         }
-        
+
         //проверка - есть ли вообще такая комната айдишник которой ввели????
         Room room;
         try (SqlSession session = sqlSessionFactory.openSession()) {
@@ -130,9 +138,8 @@ public class TelephonyServiceImp implements TelephonyService {
             throw new TelephonyException("Error searching room!");
         }
         if (room == null) {
-            throw new TelephonyException("Room is null!");
+            throw new TelephonyException("Room is not found!");
         }
-
 
         List<Apparatus> apparatus;
         try (SqlSession session = sqlSessionFactory.openSession()) {
@@ -150,7 +157,7 @@ public class TelephonyServiceImp implements TelephonyService {
                 app.setBusy(false);
             }
         }
-        
+
         return apparatus;
     }
 

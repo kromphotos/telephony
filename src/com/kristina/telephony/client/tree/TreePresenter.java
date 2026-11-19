@@ -156,6 +156,7 @@ public class TreePresenter implements CallEndedEventHandler, QueuePresenter.Phon
                 //сброс выбора
                 selectedExtensionNumber = null;
                 selectedPhone = null;
+                updateAnswerButtonState();
 
                 //перезагружаем очередь и дерево и активные звонки
                 loadRooms();
@@ -183,6 +184,7 @@ public class TreePresenter implements CallEndedEventHandler, QueuePresenter.Phon
     @Override
     public void onCallEnded(CallEndedEvent event) {
         loadRooms();
+        //updateAnswerButtonState();
     }
     
     @Override

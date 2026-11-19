@@ -50,7 +50,7 @@ public class CallService {
     }
     
     //3 запрос - посмотреть очередь(список номеров + отсортировано по времени)
-    public List<String> getQueue() {
+    public List<String> getQueue() throws TelephonyException {
         return incomingCalls.values().stream()
                 .sorted(Comparator.comparing(IncomingCall::getCreatedTime))
                 .map(IncomingCall::getPhoneNumber)
@@ -89,7 +89,7 @@ public class CallService {
         busyApparatus.remove(extensionNumber);
     }
     //6 запрос - посмотреть активные звонки(вывод - список разговоров)
-    public List<ActiveCall> getActiveCalls() {
+    public List<ActiveCall> getActiveCalls() throws TelephonyException {
         return new ArrayList<>(activeCalls.values());
     }
     //по добавочному номеру возвращет - занят ли аппарат

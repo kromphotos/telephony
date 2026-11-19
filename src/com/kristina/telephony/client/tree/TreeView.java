@@ -87,8 +87,10 @@ public class TreeView extends Composite implements TreeInterface {
 
                     final Label appLabel = new Label(text);
 
+                    appLabel.getElement().getStyle().setPaddingTop(4, Unit.PX);
+                    appLabel.getElement().getStyle().setPaddingRight(4, Unit.PX);
+                    appLabel.getElement().getStyle().setPaddingBottom(4, Unit.PX);
                     appLabel.getElement().getStyle().setPaddingLeft(15, Unit.PX);
-                    appLabel.getElement().getStyle().setPadding(4, Unit.PX);
                     appLabel.getElement().getStyle().setCursor(Cursor.POINTER);
                     appLabel.getElement().getStyle().setProperty("borderBottom", "1px solid #eeeeee");
 

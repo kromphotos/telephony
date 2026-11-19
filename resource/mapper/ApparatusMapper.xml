@@ -16,9 +16,9 @@
 	<select id="findByRoomId" resultMap="ApparatusResultMap"
 		parameterType="java.lang.Long">
 		SELECT id, extension_number, operator_name
-		FROM
-		apparatus
+		FROM apparatus
 		WHERE room_id = #{roomId}
+		ORDER BY extension_number
 	</select>
 
 	<select id="findByExtensionNumber" resultMap="ApparatusResultMap"
