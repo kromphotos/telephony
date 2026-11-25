@@ -1,19 +1,25 @@
 package com.kristina.telephony.server;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import com.kristina.telephony.server.model.IncomingCall;
+import com.kristina.telephony.server.rabbitmq.EventPublisher;
 import com.kristina.telephony.shared.ActiveCall;
 import com.kristina.telephony.shared.Apparatus;
 import com.kristina.telephony.shared.TelephonyException;
 
 public class CallService {
+    private static final Logger LOGGER = Logger.getLogger(CallService.class.getName());
+
+    private final EventPublisher eventPublisher = new EventPublisher();
     //входящие звонки(ключом является номер телефона)
     private final Map<String, IncomingCall> incomingCalls = new ConcurrentHashMap();
     //активные разговоры(ключом явл добавочный номер оператора)
@@ -37,6 +43,13 @@ public class CallService {
         }
         IncomingCall call = new IncomingCall(phoneNumber, new Date());
         incomingCalls.put(phoneNumber, call);
+
+        //публикация события incoming
+        try {
+            eventPublisher.publishIncoming(phoneNumber, call.getCreatedTime());
+        } catch (IOException e) {
+            LOGGER.warning("Error publishing INCOMING event: " + e.getMessage());
+        }
     }
 
     //2 запрос от АТС - удалить звонок из очереди
@@ -47,8 +60,15 @@ public class CallService {
         if (removedCall == null) {
             throw new TelephonyException("Call not in queue!");
         }
+
+        //публикация события cancelled
+        try {
+            eventPublisher.publishCancelled(phoneNumber,  new Date());
+        } catch (IOException e) {
+            LOGGER.warning("Error publishing CANCELLED event: " + e.getMessage());
+        }
     }
-    
+
     //3 запрос - посмотреть очередь(список номеров + отсортировано по времени)
     public List<String> getQueue() throws TelephonyException {
         return incomingCalls.values().stream()
@@ -56,7 +76,7 @@ public class CallService {
                 .map(IncomingCall::getPhoneNumber)
                 .collect(Collectors.toList());
     }
-    
+
     //4 запрос - ответить на звонок 
     //параметры (внутренний номер + входящий номер)
     public void answerCall(Long extensionNumber, String phoneNumber, Apparatus apparatus) throws TelephonyException {
@@ -73,25 +93,48 @@ public class CallService {
         activeCall.setExtensionNumber(extensionNumber);
         activeCall.setOperatorName(apparatus.getOperatorName());
         activeCall.setPhoneNumber(phoneNumber);
+        activeCall.setStartedAt(new Date());//начало вызова
 
         activeCalls.put(extensionNumber, activeCall);
         busyApparatus.put(extensionNumber, phoneNumber);
-        
+
+        try {
+            eventPublisher.publishAnswered(
+                    phoneNumber,
+                    extensionNumber,
+                    apparatus.getOperatorName(),
+                    activeCall.getStartedAt());
+        } catch (IOException e) {
+            LOGGER.warning("Error publishing ANSWERED event: " + e.getMessage());
+        }
     }
-    
+
     //5 запрос - завершить звонок
     //параметр - внутренний номер
-    public void endCall(Long extensionNumber) throws TelephonyException{
+    public void endCall(Long extensionNumber) throws TelephonyException {
         ActiveCall activeCall = activeCalls.remove(extensionNumber);
         if (activeCall == null) {
             throw new TelephonyException("No active calls!");
         }
         busyApparatus.remove(extensionNumber);
+        
+        try {
+            eventPublisher.publishEnded(
+                    activeCall.getPhoneNumber(),
+                    activeCall.getExtensionNumber(),
+                    activeCall.getOperatorName(),
+                    new Date()
+            );
+        } catch (IOException e) {
+            LOGGER.warning("Error publishing ENDED event: " + e.getMessage());
+        }
     }
+
     //6 запрос - посмотреть активные звонки(вывод - список разговоров)
     public List<ActiveCall> getActiveCalls() throws TelephonyException {
         return new ArrayList<>(activeCalls.values());
     }
+
     //по добавочному номеру возвращет - занят ли аппарат
     //если не нашел такого в занятых - вернет налл
     public String getPhoneNumberByExtension(Long extensionNumber) {

@@ -30,8 +30,14 @@ public class CallHttpServlet extends HttpServlet {
         }
         try {
             CallRequest callRequest = gson.fromJson(body.toString(), CallRequest.class);
+            
+            if (callRequest == null) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return;
+            }
 
             String phoneNumber = callRequest.getPhoneNumber();
+            
             if (phoneNumber == null || phoneNumber.isEmpty()) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 return;

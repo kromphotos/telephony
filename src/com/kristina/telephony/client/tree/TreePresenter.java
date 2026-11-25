@@ -57,7 +57,7 @@ public class TreePresenter implements CallEndedEventHandler, QueuePresenter.Phon
             }
         });
 
-        AppEventBus.get().addHandler(CallEndedEvent.TYPE, this);//подписка на событие завершения звонка
+        AppEventBus.get().addHandler(CallEndedEvent.TYPE, this);
         AppEventBus.get().addHandler(RefreshEvent.TYPE, this);
 
         loadRooms();//загрузка комнат при старте

@@ -1,4 +1,5 @@
 package com.kristina.telephony.shared;
+import java.util.Date;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
@@ -6,6 +7,7 @@ public class ActiveCall implements IsSerializable {
     private Long extensionNumber;
     private String phoneNumber;
     private String operatorName;
+    private Date startedAt;
     
     public ActiveCall() {
         
@@ -20,6 +22,14 @@ public class ActiveCall implements IsSerializable {
 
     public Long getExtensionNumber() {
         return extensionNumber;
+    }
+
+    public Date getStartedAt() {
+        return startedAt;
+    }
+
+    public void setStartedAt(Date startedAt) {
+        this.startedAt = startedAt;
     }
 
     public void setExtensionNumber(Long extensionNumber) {

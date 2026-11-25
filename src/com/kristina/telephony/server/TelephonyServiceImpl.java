@@ -96,11 +96,7 @@ public class TelephonyServiceImpl implements TelephonyService {
             throw new TelephonyException("Apparatus not found");
         }
 
-        try {
-            callService.endCall(extensionNumber);
-        } catch (TelephonyException e) {
-            throw new TelephonyException("Apparatus not found");
-        }
+        callService.endCall(extensionNumber);
     }
 
     //операция 6 - просмотр активных звонков

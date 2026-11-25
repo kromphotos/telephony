@@ -60,6 +60,10 @@ public class QueuePresenter implements CallEndedEventHandler, AnswerCallEventHan
                 //если выбранного звонка больше нет в очереди то сбрасываем выбор
                 if (selectedPhone != null && !queue.contains(selectedPhone)) {
                     selectedPhone = null;
+                    
+                    if (selectionHandler != null) {
+                        selectionHandler.onPhoneSelected(null);
+                    }
                 }
                 convertToData();
             }

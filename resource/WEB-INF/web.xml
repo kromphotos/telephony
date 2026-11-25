@@ -1,35 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
               http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-         version="2.5"
-         xmlns="http://java.sun.com/xml/ns/javaee">
+	version="2.5" xmlns="http://java.sun.com/xml/ns/javaee">
 
-  <!-- Servlets -->
-  <servlet>
-    <servlet-name>telephonyServlet</servlet-name>
-    <servlet-class>com.kristina.telephony.server.GwtServiceImpl</servlet-class>
-  </servlet>
-  
-  <servlet-mapping>
-    <servlet-name>telephonyServlet</servlet-name>
-    <url-pattern>/app/telephony</url-pattern>
-  </servlet-mapping>
-  
-  <!-- HTTP API для АТС -->
-  <servlet>
-    <servlet-name>CallHttpServlet</servlet-name>
-    <servlet-class>com.kristina.telephony.server.http.CallHttpServlet</servlet-class>
-  </servlet>
-  
-  <servlet-mapping>
-    <servlet-name>CallHttpServlet</servlet-name>
-    <url-pattern>/api/calls/*</url-pattern>
-  </servlet-mapping>
-  
-  <!-- Default page to serve -->
-  <welcome-file-list>
-    <welcome-file>Telephony.html</welcome-file>
-  </welcome-file-list>
+	<!-- Servlets -->
+	<servlet>
+		<servlet-name>telephonyServlet</servlet-name>
+		<servlet-class>com.kristina.telephony.server.GwtServiceImpl</servlet-class>
+	</servlet>
 
+	<servlet-mapping>
+		<servlet-name>telephonyServlet</servlet-name>
+		<url-pattern>/app/telephony</url-pattern>
+	</servlet-mapping>
+
+	<!-- HTTP API для АТС -->
+	<servlet>
+		<servlet-name>CallHttpServlet</servlet-name>
+		<servlet-class>com.kristina.telephony.server.http.CallHttpServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>CallHttpServlet</servlet-name>
+		<url-pattern>/api/calls/*</url-pattern>
+	</servlet-mapping>
+
+	<!-- Default page to serve -->
+	<welcome-file-list>
+		<welcome-file>Telephony.html</welcome-file>
+	</welcome-file-list>
+
+	<listener>
+		<listener-class>
+			com.kristina.telephony.server.rabbitmq.RabbitMQListener
+		</listener-class>
+	</listener>
 </web-app>
